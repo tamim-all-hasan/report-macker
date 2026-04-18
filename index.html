@@ -3,58 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Report Generator</title>
+    <title>Trade Report Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body { background-color: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .input-group { margin-bottom: 10px; }
-        input { padding: 8px; border-radius: 5px; border: 1px solid #333; background: #222; color: white; }
-        
+        body { 
+            background-color: #0a0a0a; 
+            color: #e0e0e0; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 40px 20px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+            max-width: 400px;
+        }
+        input, select { 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid #333; 
+            background: #1a1a1a; 
+            color: white; 
+            outline: none;
+        }
+        input:focus { border-color: #00ff96; }
+
         /* The Report Card */
         #report-card {
-            width: 350px; background-color: #0f0f0f; border: 1px solid #333;
-            padding: 30px; text-align: center; border-radius: 10px; line-height: 1.6;
+            width: 360px; 
+            background-color: #000000; 
+            border: 1px solid #222;
+            padding: 40px 30px; 
+            text-align: center; 
+            line-height: 1.5;
+            letter-spacing: 0.5px;
         }
-        .divider { color: #555; margin: 10px 0; }
-        .highlight { color: #00ff96; font-weight: bold; }
-        .pair { font-size: 22px; font-weight: bold; margin: 15px 0; }
-        .profit { font-size: 24px; color: #00ff96; font-weight: bold; margin-top: 15px; }
-        
-        button {
-            margin-top: 20px; padding: 10px 20px; background: #00ff96; 
-            border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
+        .rocket { font-size: 20px; margin-bottom: 10px; }
+        .divider { color: #444; margin: 15px 0; font-weight: bold; }
+        .label { color: #888; font-size: 14px; text-transform: uppercase; margin-bottom: 4px; }
+        .value { font-size: 18px; margin-bottom: 15px; }
+        .pair { font-size: 26px; font-weight: 800; color: #ffffff; margin: 10px 0; }
+        .profit-box { 
+            margin-top: 25px; 
+            padding: 15px;
+            border: 1px dashed #00ff96;
+            border-radius: 8px;
         }
+        .profit-text { font-size: 28px; color: #00ff96; font-weight: bold; }
+        .hit-text { color: #00ff96; font-size: 16px; margin-bottom: 5px; font-weight: bold; }
+
+        .btn-download {
+            margin-top: 30px; 
+            padding: 15px 40px; 
+            background: linear-gradient(45deg, #00ff96, #00cc7a); 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+            color: #000;
+        }
+        .btn-download:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 255, 150, 0.4); }
     </style>
 </head>
 <body>
 
-    <h2>📊 Trade Report Creator</h2>
+    <h2>🚀 Report Generator</h2>
     
-    <div class="input-group">
-        <input type="text" id="pairInput" placeholder="Pair (e.g. MLN/USDT)" oninput="updateReport()">
-        <input type="number" id="entryInput" placeholder="Entry Price" oninput="updateReport()">
-        <input type="number" id="tpInput" placeholder="TP Price" oninput="updateReport()">
+    <div class="controls">
+        <input type="text" id="exInput" placeholder="Exchange (e.g. MEXC)" oninput="updateReport()">
+        <input type="text" id="pairInput" placeholder="Pair (MLN/USDT)" oninput="updateReport()">
+        <input type="number" id="entryInput" placeholder="Entry Price" oninput="updateReport()" step="any">
+        <input type="number" id="tpInput" placeholder="Take Profit" oninput="updateReport()" step="any">
     </div>
 
     <div id="report-card">
-        <div>🚀 TRADE UPDATE</div>
+        <div class="rocket">🚀 TRADE UPDATE</div>
         <div class="divider">━━━━━━━━━━━━━━━━━━━</div>
-        <div>🏦 Exchange: MEXC</div>
-        <div>💱 Market: Spot</div>
-        <div class="pair" id="displayPair">PAIR/USDT</div>
+        
+        <div class="label">🏦 Exchange</div>
+        <div class="value" id="displayEx">MEXC</div>
+
+        <div class="label">💱 Market</div>
+        <div class="value">Spot</div>
+
+        <div class="pair" id="displayPair">MLN/USDT</div>
+
         <div class="divider">━━━━━━━━━━━━━━━━━━━</div>
-        <div>🎯 Entry Price: <span id="displayEntry">0.00</span></div>
-        <div>💰 Take Profit: <span id="displayTP">0.00</span></div>
-        <div style="margin-top:15px">✅ Take Profit Hit!</div>
-        <div class="profit" id="displayProfit">📈 Profit: +0.00%</div>
+
+        <div class="label">🎯 Entry Price</div>
+        <div class="value" id="displayEntry">3.05</div>
+
+        <div class="label">💰 Take Profit</div>
+        <div class="value" id="displayTP">3.18</div>
+
+        <div class="profit-box">
+            <div class="hit-text">✅ Take Profit Hit!</div>
+            <div class="profit-text" id="displayProfit">📈 +4.26%</div>
+        </div>
+
         <div class="divider">━━━━━━━━━━━━━━━━━━━</div>
     </div>
 
-    <button onclick="downloadImage()">🚀 Download Image</button>
+    <button class="btn-download" onclick="downloadImage()">⬇️ Download Image</button>
 
     <script>
         function updateReport() {
-            const pair = document.getElementById('pairInput').value || 'PAIR/USDT';
+            const ex = document.getElementById('exInput').value || 'MEXC';
+            const pair = document.getElementById('pairInput').value || 'MLN/USDT';
             const entry = parseFloat(document.getElementById('entryInput').value) || 0;
             const tp = parseFloat(document.getElementById('tpInput').value) || 0;
             
@@ -63,19 +124,42 @@
                 profit = ((tp - entry) / entry) * 100;
             }
 
+            document.getElementById('displayEx').innerText = ex;
             document.getElementById('displayPair').innerText = pair;
-            document.getElementById('displayEntry').innerText = entry;
-            document.getElementById('displayTP').innerText = tp;
-            document.getElementById('displayProfit').innerText = `📈 Profit: +${profit.toFixed(2)}%`;
+            document.getElementById('displayEntry').innerText = entry.toLocaleString();
+            document.getElementById('displayTP').innerText = tp.toLocaleString();
+            document.getElementById('displayProfit').innerText = `📈 +${profit.toFixed(2)}%`;
         }
 
-        function downloadImage() {
-            html2canvas(document.querySelector("#report-card")).then(canvas => {
-                let link = document.createElement('a');
-                link.download = 'trade-report.png';
-                link.href = canvas.toDataURL();
+        async function downloadImage() {
+            const card = document.querySelector("#report-card");
+            const btn = document.querySelector(".btn-download");
+            
+            btn.innerText = "Generating...";
+            
+            // Fix for download: Using a small delay to ensure rendering
+            try {
+                const canvas = await html2canvas(card, {
+                    backgroundColor: "#000000",
+                    scale: 2, // Higher quality
+                    logging: false,
+                    useCORS: true
+                });
+
+                const image = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = `Trade_Report_${document.getElementById('pairInput').value || 'Update'}.png`;
+                document.body.appendChild(link);
                 link.click();
-            });
+                document.body.removeChild(link);
+                
+                btn.innerText = "⬇️ Download Image";
+            } catch (err) {
+                console.error("Error generating image:", err);
+                alert("Download failed! Try again.");
+                btn.innerText = "⬇️ Download Image";
+            }
         }
     </script>
 </body>
