@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Report Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { background-color: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .input-group { margin-bottom: 10px; }
+        input { padding: 8px; border-radius: 5px; border: 1px solid #333; background: #222; color: white; }
+        
+        /* The Report Card */
+        #report-card {
+            width: 350px; background-color: #0f0f0f; border: 1px solid #333;
+            padding: 30px; text-align: center; border-radius: 10px; line-height: 1.6;
+        }
+        .divider { color: #555; margin: 10px 0; }
+        .highlight { color: #00ff96; font-weight: bold; }
+        .pair { font-size: 22px; font-weight: bold; margin: 15px 0; }
+        .profit { font-size: 24px; color: #00ff96; font-weight: bold; margin-top: 15px; }
+        
+        button {
+            margin-top: 20px; padding: 10px 20px; background: #00ff96; 
+            border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📊 Trade Report Creator</h2>
+    
+    <div class="input-group">
+        <input type="text" id="pairInput" placeholder="Pair (e.g. MLN/USDT)" oninput="updateReport()">
+        <input type="number" id="entryInput" placeholder="Entry Price" oninput="updateReport()">
+        <input type="number" id="tpInput" placeholder="TP Price" oninput="updateReport()">
+    </div>
+
+    <div id="report-card">
+        <div>🚀 TRADE UPDATE</div>
+        <div class="divider">━━━━━━━━━━━━━━━━━━━</div>
+        <div>🏦 Exchange: MEXC</div>
+        <div>💱 Market: Spot</div>
+        <div class="pair" id="displayPair">PAIR/USDT</div>
+        <div class="divider">━━━━━━━━━━━━━━━━━━━</div>
+        <div>🎯 Entry Price: <span id="displayEntry">0.00</span></div>
+        <div>💰 Take Profit: <span id="displayTP">0.00</span></div>
+        <div style="margin-top:15px">✅ Take Profit Hit!</div>
+        <div class="profit" id="displayProfit">📈 Profit: +0.00%</div>
+        <div class="divider">━━━━━━━━━━━━━━━━━━━</div>
+    </div>
+
+    <button onclick="downloadImage()">🚀 Download Image</button>
+
+    <script>
+        function updateReport() {
+            const pair = document.getElementById('pairInput').value || 'PAIR/USDT';
+            const entry = parseFloat(document.getElementById('entryInput').value) || 0;
+            const tp = parseFloat(document.getElementById('tpInput').value) || 0;
+            
+            let profit = 0;
+            if(entry > 0) {
+                profit = ((tp - entry) / entry) * 100;
+            }
+
+            document.getElementById('displayPair').innerText = pair;
+            document.getElementById('displayEntry').innerText = entry;
+            document.getElementById('displayTP').innerText = tp;
+            document.getElementById('displayProfit').innerText = `📈 Profit: +${profit.toFixed(2)}%`;
+        }
+
+        function downloadImage() {
+            html2canvas(document.querySelector("#report-card")).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'trade-report.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
